@@ -56,6 +56,9 @@ class titleBar(QtWidgets.QWidget):
         self.horizontalSpacer = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalSpacer1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
 
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(4)
+
         self.layout.addWidget(self.leftFrame)
         self.layout.addItem(self.horizontalSpacer)
         self.layout.addWidget(self.centralFrame)
@@ -81,20 +84,16 @@ class titleBar(QtWidgets.QWidget):
         self.centralFrame.setSizePolicy(sizePolicy)
 
         self.icon = None
+        self.setStyleSheet('background-color: rgb(0, 0, 0);')
         self.update()
 
     def update(self):
-        print('updating')
         self.loadConfig()
 
         places = [self.leftFrame, self.centralFrame, self.rightFrame]
         size = self.config.get('style', dict()).get('general', dict()).get('icon-size', 18)
-        print(size)
-        print('iterating..')
         for place, i in enumerate(self.config['items']):
-            print(place)
             for item in self.config['items'][i]:
-                print(f'item found as "{item}".')
                 if item == 'icon':
                     self.icon = QtWidgets.QLabel(self)
                     places[place].layout.addWidget(self.icon)
@@ -222,11 +221,13 @@ class windowShell(QtWidgets.QWidget):
         self.wallpaper = QtWidgets.QLabel(self)
         self.wallpaper.pixmap = QtGui.QPixmap(self.size())
 
-        self.wallpaperCover.layout.setContentsMargins(0, 0, 0, 0)
 
+        self.wallpaperCover.layout.setContentsMargins(0, 0, 0, 0)
         self.wallpaperCover.layout.addWidget(self.wallpaper)
 
         self.layout = QtWidgets.QHBoxLayout(self)
+        # TODO :: set layout spacing
+        self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.wallpaperCover)
 
         self.tb = titleBar(self)
@@ -237,6 +238,9 @@ class windowShell(QtWidgets.QWidget):
         self.mainFrame = QtWidgets.QFrame(self.centralFrame)
 
         self.horizontalSpacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+
+        self.centralFrame.layout.setContentsMargins(0, 0, 0, 0)
+        self.centralFrame.layout.setSpacing(0)
 
         self.centralFrame.layout.addWidget(self.tb)
         self.centralFrame.layout.addItem(self.horizontalSpacer)
@@ -279,6 +283,7 @@ class windowShell(QtWidgets.QWidget):
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         self.oldPos = a0.globalPos()
+        self.setFocus()
         self.updateWallpaper()
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
