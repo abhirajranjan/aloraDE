@@ -221,7 +221,6 @@ class windowShell(QtWidgets.QWidget):
         self.wallpaper = QtWidgets.QLabel(self)
         self.wallpaper.pixmap = QtGui.QPixmap(self.size())
 
-
         self.wallpaperCover.layout.setContentsMargins(0, 0, 0, 0)
         self.wallpaperCover.layout.addWidget(self.wallpaper)
 
@@ -247,6 +246,15 @@ class windowShell(QtWidgets.QWidget):
         self.centralFrame.layout.addWidget(self.mainFrame)
 
         self.loadGraphicsEffect()
+        self.readConf()
+
+    def readConf(self):
+        with open('shell.conf') as file:
+            self.config = json.load(file)['shell']
+
+        if self.config['general']['offset']:
+            self.layout.setContentsMargins(*self.config['general']['offset'])
+
 
     @QtCore.pyqtSlot()
     def loadGraphicsEffect(self):
