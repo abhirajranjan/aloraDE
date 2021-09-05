@@ -84,19 +84,43 @@ class titleBar(QtWidgets.QWidget):
         self.centralFrame.setSizePolicy(sizePolicy)
 
         self.icon = None
-        self.setStyleSheet('background-color: rgb(0, 0, 0);')
-        self.update()
+        self.refreshUI()
 
-    def update(self):
+    def setTitle(self, title: str):
+        if hasattr(self, "title"):
+            self.title.setText(title)
+
+    def refreshUI(self):
         self.loadConfig()
 
-        places = [self.leftFrame, self.centralFrame, self.rightFrame]
         size = self.config.get('style', dict()).get('general', dict()).get('icon-size', 18)
-        for place, i in enumerate(self.config['items']):
+
+        for config_name, ref_name in {'leftFrame_color': self.leftFrame,
+                                      'centralFrame_color': self.centralFrame,
+                                      'rightFrame_color': self.rightFrame}.items():
+
+            color = self.config.get('style', dict()).get('general', dict()).get(config_name, [0, 0, 0, 0])
+
+            ref_name.setStyleSheet(f'background-color: rgba{tuple(color)}')
+
+        for i in self.config['items']:
+            if i == 'leftFrame':
+                place = self.leftFrame
+            elif i == 'centralFrame':
+                place = self.centralFrame
+            elif i == 'rightFrame':
+                place = self.rightFrame
+            else:
+                # TODO :: titlebar Config Exceptions
+                continue
+
             for item in self.config['items'][i]:
                 if item == 'icon':
                     self.icon = QtWidgets.QLabel(self)
-                    places[place].layout.addWidget(self.icon)
+                    self.icon.setObjectName('icon')
+
+                    place.layout.addWidget(self.icon)
+
                     pixmap = QtGui.QPixmap()
                     pixmap.load(self.config.get('style', dict()).get('icon', dict()).get('url', ''))
                     self.icon.setPixmap(pixmap)
@@ -111,26 +135,33 @@ class titleBar(QtWidgets.QWidget):
 
                     self.icon.setSizePolicy(sizePolicy)
 
+                    self.icon.setStyleSheet('background: transparent;')
+
                 elif item == 'title':
                     self.title = QtWidgets.QLabel(self)
-                    places[place].layout.addWidget(self.title)
+                    self.title.setObjectName('title')
+
+                    place.layout.addWidget(self.title)
+
                     font = QtGui.QFont(self.config.get('style', dict()).get('title', dict()).get('font', 'monospace'),
                                        self.config.get('style', dict()).get('title', dict()).get('size', 8))
                     self.title.setFont(font)
-                    self.title.setText('hellew')
+
+                    self.title.setStyleSheet('background: transparent;')
 
                 elif item == 'shade':
                     self.shade = titleBarButton(self)
-                    places[place].layout.addWidget(self.shade)
+                    self.shade.setObjectName('shade')
+                    place.layout.addWidget(self.shade)
                     self.shade.normal = self.config.get('style', dict()).get('shade', dict()).get('normal',
                                                                                                     '')
                     self.shade.active = self.config.get('style', dict()).get('shade', dict()).get('clicked',
                                                                                                     '')
                     self.shade.hover = self.config.get('style', dict()).get('shade', dict()).get('hover',
                                                                                                    '')
-                    self.shade.func = self.shading.emit
+                    self.shade.func = self.shading.emit()
 
-                    self.shade.setScaledContents()
+                    self.shade.setScaledContents(True)
 
                     self.shade.setMaximumSize(size, size)
                     self.shade.setMinimumSize(size, size)
@@ -141,9 +172,14 @@ class titleBar(QtWidgets.QWidget):
 
                     self.shade.setSizePolicy(sizePolicy)
 
+                    self.shade.setStyleSheet('background: transparent;')
+
                 elif item == 'minimize':
                     self.minimize = titleBarButton(self)
-                    places[place].layout.addWidget(self.minimize)
+                    self.minimize.setObjectName('minimize')
+
+                    place.layout.addWidget(self.minimize)
+
                     self.minimize.normal = self.config.get('style', dict()).get('minimize', dict()).get('normal',
                                                                                                         '')
                     self.minimize.active = self.config.get('style', dict()).get('minimize', dict()).get('clicked',
@@ -163,9 +199,14 @@ class titleBar(QtWidgets.QWidget):
 
                     self.minimize.setSizePolicy(sizePolicy)
 
+                    self.minimize.setStyleSheet('background: transparent;')
+
                 elif item == 'maximize':
                     self.maximize = titleBarButton(self)
-                    places[place].layout.addWidget(self.maximize)
+                    self.maximize.setObjectName('maximize')
+
+                    place.layout.addWidget(self.maximize)
+
                     self.maximize.normal = self.config.get('style', dict()).get('maximize', dict()).get('normal',
                                                                                                         '')
                     self.maximize.active = self.config.get('style', dict()).get('maximize', dict()).get('clicked',
@@ -185,9 +226,13 @@ class titleBar(QtWidgets.QWidget):
 
                     self.maximize.setSizePolicy(sizePolicy)
 
+                    self.maximize.setStyleSheet('background: transparent;')
+
                 elif item == 'close':
                     self.close = titleBarButton(self)
-                    places[place].layout.addWidget(self.close)
+                    self.close.setObjectName('close')
+
+                    place.layout.addWidget(self.close)
                     self.close.normal = self.config.get('style', dict()).get('close', dict()).get('normal',
                                                                                                         '')
                     self.close.active = self.config.get('style', dict()).get('close', dict()).get('clicked',
@@ -206,6 +251,8 @@ class titleBar(QtWidgets.QWidget):
                     sizePolicy.setVerticalStretch(0)
 
                     self.close.setSizePolicy(sizePolicy)
+
+                    self.close.setStyleSheet('background: transparent;')
 
         super().update()
 
