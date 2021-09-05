@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import main
+import shell
 import backgroundIntegration
 
-class widget(main.windowShell):
+class widget(shell.windowShell):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.initUI()
