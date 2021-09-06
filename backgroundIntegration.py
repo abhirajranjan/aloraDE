@@ -1,17 +1,6 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5 import QtGui, QtWidgets
 import os
-import json
-
-
-class wallpaperException(Exception):
-    def __init__(self, message, errorCode):
-        self.message = message
-        self.errorCode = errorCode
-
-    def __repr__(self):
-        return f'W: WallpaperException[{self.errorCode}]: {self.message}.' \
-               f'To reset wallpaper config run app -reset-config.' \
-               '\n[Info]: setting up default wallpaper'
+import exceptions
 
 
 class wallpaperManager(QtWidgets.QWidget):
@@ -22,19 +11,20 @@ class wallpaperManager(QtWidgets.QWidget):
         self.refreshConfig()
 
     def refreshConfig(self):
-        if os.path.lexists(os.path.join(os.getcwd(), 'shell.conf')):
-            with open('shell.conf') as file:
-                self.config = json.load(file)['Wallpaper']
+        config = self.parent().loadConfig('Wallpaper', ensure=['wallpaperStyle', 'wallpaperType'])
+        if not config: return
+        self.config = config
+        print(self.config.keys())
 
         self.loadConfig(self.config)
 
     def loadConfig(self, config):
-        if not self.config["wallpaperType"] in self.config['wallpaperStyle']:
-            return wallpaperException(f'unknown wallpaperType "{self.config["wallpaperType"]}" selected', 500.19)
+        if not config["wallpaperType"] in config['wallpaperStyle']:
+            return exceptions.wallpaperException(f'unknown wallpaperType "{config["wallpaperType"]}" selected', 500.19)
 
-        wallpaperStyle = self.config['wallpaperStyle'][self.config['wallpaperType']]
+        wallpaperStyle = config['wallpaperStyle'][config['wallpaperType']]
 
-        if self.config['wallpaperType'] == 'ColorType':
+        if config['wallpaperType'] == 'ColorType':
             try:
                 # TODO :: implement gradient in wallpaper
                 # if wallpaperStyle['type'].lower() == 'gradient' and wallpaperStyle['Gradient_QSS']:
@@ -48,14 +38,13 @@ class wallpaperManager(QtWidgets.QWidget):
         # TODO :: implement multiple photo slideshow in wallpaper
         # if self.config['WallpaperType'] == 'MultipleType':
 
-        elif self.config['wallpaperType'] == "SingleType":
+        elif config['wallpaperType'] == "SingleType":
             if (not os.path.lexists(wallpaperStyle["URI"])) or (not os.path.isfile(wallpaperStyle["URI"])):
-                return wallpaperException(f'wallpaper image not found at "{wallpaperStyle["URI"]}"', 404)
+                return exceptions.wallpaperException(f'wallpaper image not found at "{wallpaperStyle["URI"]}"', 404)
 
             # TODO :: implement VODs in wallpaper
 
             self.pixmap.load(wallpaperStyle['URI'])
-
 
     def paintEvent(self, e):
         self.painter = QtGui.QPainter(self)

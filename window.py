@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import shell
-import backgroundIntegration
+
 
 class widget(shell.windowShell):
     def __init__(self, *args, **kwargs):
@@ -40,37 +40,3 @@ class widget(shell.windowShell):
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         self.raise_()
         super().mousePressEvent(a0)
-
-
-class main(QtWidgets.QWidget):
-    def __init__(self):
-        super().__init__()
-        self.wid = widget(self)
-        self.newwid = widget(self)
-        self.cwindow = backgroundIntegration.wallpaperManager(self)
-        self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.addWidget(self.cwindow)
-
-        self.layout.setContentsMargins(0, 0, 0, 0)
-
-        self.wid.raise_()
-        self.newwid.raise_()
-
-        self.newwid.resize(300, 300)
-        self.newwid.move(100, 100)
-
-        self.wid.resize(300, 300)
-        self.wid.move(100, 100)
-
-        self.resize(500, 500)
-        self.wid.loadGraphicsEffect()
-        self.wid.updateWallpaper()
-        self.newwid.loadGraphicsEffect()
-        self.newwid.updateWallpaper()
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-    main = main()
-    main.show()
-    app.exec()

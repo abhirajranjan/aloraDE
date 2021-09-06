@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtGui, QtCore, QtSvg
+from PyQt5 import QtWidgets, QtGui, QtCore
 import json
 
 class titleBarButton(QtWidgets.QLabel):
@@ -272,7 +272,6 @@ class windowShell(QtWidgets.QWidget):
         self.wallpaperCover.layout.addWidget(self.wallpaper)
 
         self.layout = QtWidgets.QHBoxLayout(self)
-        # TODO :: set layout spacing
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.wallpaperCover)
 
@@ -283,7 +282,8 @@ class windowShell(QtWidgets.QWidget):
 
         self.mainFrame = QtWidgets.QFrame(self.centralFrame)
 
-        self.horizontalSpacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.horizontalSpacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum,
+                                                      QtWidgets.QSizePolicy.Expanding)
 
         self.centralFrame.layout.setContentsMargins(0, 0, 0, 0)
         self.centralFrame.layout.setSpacing(0)
@@ -301,7 +301,6 @@ class windowShell(QtWidgets.QWidget):
 
         if self.config['general']['offset']:
             self.layout.setContentsMargins(*self.config['general']['offset'])
-
 
     @QtCore.pyqtSlot()
     def loadGraphicsEffect(self):
@@ -324,14 +323,6 @@ class windowShell(QtWidgets.QWidget):
         self.wallpaper.pixmap = QtGui.QPixmap(self.size())
         self.wallpaper.pixmap.fill(QtCore.Qt.transparent)
 
-    @QtCore.pyqtSlot()
-    def moveWidget(self):
-        wid = self.sender()
-        if wid.objectName() == 'moveRightBtn':
-            self.move(self.x() + 10, self.y())
-        elif wid.objectName() == 'moveLeftBtn':
-            self.move(self.x() - 10, self.y())
-
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         super().resizeEvent(a0)
         self.centralFrame.resize(self.size())
@@ -349,7 +340,6 @@ class windowShell(QtWidgets.QWidget):
         self.updateWallpaper()
 
     ## blur
-
     # general approch
     def applyEffectToImage(self, pixmap: QtGui.QPixmap, effect: QtWidgets.QGraphicsEffect, extend: int = 0):
         if pixmap.isNull(): return QtGui.QPixmap()
