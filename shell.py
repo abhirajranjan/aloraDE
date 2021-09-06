@@ -1,5 +1,4 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
-import json
 
 class titleBarButton(QtWidgets.QLabel):
     def __init__(self, *args, **kwargs):
@@ -257,8 +256,10 @@ class titleBar(QtWidgets.QWidget):
         super().update()
 
     def loadConfig(self):
-        with open('shell.conf') as configfile:
-            self.config = json.load(configfile)['titlebar']
+        config = self.window().loadConfig('titlebar', ensure=['items', 'style'])
+        if config:
+            self.config = config
+
 
 class windowShell(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
@@ -296,11 +297,15 @@ class windowShell(QtWidgets.QWidget):
         self.readConf()
 
     def readConf(self):
-        with open('shell.conf') as file:
-            self.config = json.load(file)['shell']
+        config = self.window().loadConfig('shell', ensure=['general'])
+        if not config: return
+        self.config = config
 
         if self.config['general']['offset']:
             self.layout.setContentsMargins(*self.config['general']['offset'])
+
+    def setTitle(self, title: str):
+        self.tb.setTitle(title)
 
     @QtCore.pyqtSlot()
     def loadGraphicsEffect(self):

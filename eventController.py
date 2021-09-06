@@ -1,6 +1,7 @@
 import backgroundIntegration
 from PyQt5 import QtWidgets
 import customFunctions
+import window
 
 
 class main(QtWidgets.QWidget):
@@ -14,6 +15,8 @@ class main(QtWidgets.QWidget):
         self.layout.addWidget(self.backgroundWallaper)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
+        self.testShell()
+
     def loadConfig(self, *args, **kwargs):
         isConfig = customFunctions.loadConfig(*args, **kwargs)
         if issubclass(type(isConfig), Exception):
@@ -21,11 +24,20 @@ class main(QtWidgets.QWidget):
             return
         return isConfig
 
+    def testShell(self):
+        self.test_widget = window.widget(self)
+        self.test_widget.setTitle('main app: runtime')
+        self.loadApp(self.test_widget)
+
     def loadApp(self, wid: QtWidgets.QWidget):
         # register wid to active list
         self.activeWindow[id(wid)] = wid
 
-        self.wid.show()
+        wid.resize(500, 500)
+
+        wid.show()
+        wid.raise_()
+        wid.setFocus()
 
         wid.loadGraphicsEffect()
         wid.updateWallpaper()

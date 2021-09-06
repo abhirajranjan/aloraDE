@@ -18,16 +18,12 @@ class widget(shell.windowShell):
 
         self.mainFrame.upperFrame.btn = QtWidgets.QPushButton(self)
         self.mainFrame.upperFrame.btn.setText('Shoot')
-        self.mainFrame.upperFrame.btn.clicked.connect(self.updateWallpaper)
 
         self.mainFrame.lowerFrame.moveLeftBtn = QtWidgets.QPushButton(self.mainFrame.lowerFrame)
         self.mainFrame.lowerFrame.moveLeftBtn.setObjectName('moveLeftBtn')
 
         self.mainFrame.lowerFrame.moveRightBtn = QtWidgets.QPushButton(self.mainFrame.lowerFrame)
         self.mainFrame.lowerFrame.moveRightBtn.setObjectName('moveRightBtn')
-
-        self.mainFrame.lowerFrame.moveLeftBtn.clicked.connect(self.moveWidget)
-        self.mainFrame.lowerFrame.moveRightBtn.clicked.connect(self.moveWidget)
 
         self.mainFrame.lowerFrame.layout.addWidget(self.mainFrame.lowerFrame.moveLeftBtn)
         self.mainFrame.lowerFrame.layout.addWidget(self.mainFrame.lowerFrame.moveRightBtn)
