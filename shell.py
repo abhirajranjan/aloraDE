@@ -294,8 +294,8 @@ class windowShell(QtWidgets.QWidget):
         self.centralFrame.layout.addItem(self.horizontalSpacer)
         self.centralFrame.layout.addWidget(self.mainFrame)
 
-        self.loadGraphicsEffect()
         self.readConf()
+        self.loadGraphicsEffect()
 
     def loadParentConstaint(self):
         self.AlwaysOnTop = False
@@ -319,11 +319,27 @@ class windowShell(QtWidgets.QWidget):
         self.dropShadow.setOffset(0, 10)
 
         self.blur = QtWidgets.QGraphicsBlurEffect()
-        self.blur.setBlurRadius(8)
+        self.blur.setBlurRadius(self.config['blur']['radius'])
 
         self.wallpaper.setGraphicsEffect(self.blur)
 
-        self.wallpaperCover.setStyleSheet('background-color:rgba(3, 3, 3, 100)')
+        if len(self.config['blur']['tint']) == 3:
+            color1 = self.config['blur']['tint'][0]
+            color2 = self.config['blur']['tint'][1]
+            color3 = self.config['blur']['tint'][2]
+
+            self.wallpaperCover.setStyleSheet(f'background-color:rgb({color1}, {color2}, {color3})')
+
+        elif len(self.config['blur']['tint']) == 4:
+            color1 = self.config['blur']['tint'][0]
+            color2 = self.config['blur']['tint'][1]
+            color3 = self.config['blur']['tint'][2]
+            color4 = self.config['blur']['tint'][3]
+
+            self.wallpaperCover.setStyleSheet(f'background-color:rgba({color1}, {color2}, {color3}, {color4})')
+
+        else:
+            self.wallpaperCover.setStyleSheet('background-color:rgba(3, 3, 3, 100)')
 
     @QtCore.pyqtSlot()
     def unloadGraphicsEffect(self):

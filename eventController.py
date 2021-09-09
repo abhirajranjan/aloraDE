@@ -110,7 +110,10 @@ class main(QtWidgets.QWidget):
     def grabBackground(self, widget):
         temp = {}
         if widget in self.alwaysOnTop:
-            return self.grab(QtCore.QRect(widget.x(), widget.y(), widget.width(), widget.height()))
+            return self.grab(QtCore.QRect(widget.x() + widget.layout.x(),
+                                          widget.y() + widget.wallpaper.y(),
+                                          widget.wallpaper.width(),
+                                          widget.wallpaper.height()))
 
         for alwaysOnTopWidgetID in self.alwaysOnTop:
             # TODO :: better method to hide sp widget probably using sets or updating blur algo
