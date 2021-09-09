@@ -7,6 +7,7 @@ class panel(QtWidgets.QWidget):
 
     def __init__(self, parent):
         super().__init__(parent)
+        self.setOnTop = True
         self.taskbar = taskbar.taskbar(self)
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:

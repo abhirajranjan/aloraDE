@@ -338,7 +338,7 @@ class windowShell(QtWidgets.QWidget):
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         self.oldPos = a0.globalPos()
-        self.setFocus()
+        self.window().raiseWidget(self)
         self.updateWallpaper()
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:

@@ -34,5 +34,4 @@ class widget(shell.windowShell):
         self.mainFrame.layout.addWidget(self.mainFrame.lowerFrame)
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
-        self.raise_()
         super().mousePressEvent(a0)

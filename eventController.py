@@ -15,6 +15,8 @@ class main(QtWidgets.QWidget):
         self.activeWindow = {}
         self.alwaysOnTop = {}
 
+        self.alwaysOnTopWidgetList = customFunctions.LinkedList()
+
         self.backgroundWallaper = backgroundIntegration.wallpaperManager(self)
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.addWidget(self.backgroundWallaper)
@@ -23,10 +25,33 @@ class main(QtWidgets.QWidget):
         self.taskpanel = taskpanel.panel(self)
         self.mainWidgetArea = QtWidgets.QFrame(self)
 
+        self.refreshAlwaysOnTopWidgetList()
+
         self.taskpanel.raise_()
         self.mainWidgetArea.raise_()
 
         self.test()
+
+    def refreshAlwaysOnTopWidgetList(self):
+        if self.taskpanel.setOnTop:
+            self.setAlwaysOnTop(self.taskpanel, True)
+            self.alwaysOnTopWidgetList.setLast(id(self.taskpanel))
+
+    def raiseWidget(self, widget: QtWidgets.QWidget) -> bool:
+        if id(widget) in self.alwaysOnTop:
+            self.alwaysOnTopWidgetList.remove(id(widget))
+            self.alwaysOnTopWidgetList.append(id(widget))
+            return self._raiseWidget()
+
+        else:
+            widget.raise_()
+            return self._raiseWidget()
+
+    def _raiseWidget(self):
+        for onTopWidget in self.alwaysOnTopWidgetList:
+            if onTopWidget:
+                self.alwaysOnTop[onTopWidget].raise_()
+        return True
 
     def setAlwaysOnTop(self, wid: QtWidgets.QWidget, value: bool) -> bool:
         if (id(wid) in self.alwaysOnTop) and value:
@@ -37,7 +62,6 @@ class main(QtWidgets.QWidget):
             return self.alwaysOnTop.pop(id(wid), None)
 
         if not (id(wid) in self.alwaysOnTop):
-            wid.setParent(self.alwaysOnTopArea)
             self.alwaysOnTop[id(wid)] = wid
             return True
         return False
