@@ -9,7 +9,6 @@ class panel(QtWidgets.QWidget):
         super().__init__(parent)
         self.setOnTop = True
         self.taskbar = taskbar.taskbar(self)
-
-    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
-        self.resizeEventSignal.emit(self.size())
-        super().resizeEvent(a0)
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0 ,0)
+        self.layout.addWidget(self.taskbar)
