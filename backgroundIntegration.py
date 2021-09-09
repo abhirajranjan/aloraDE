@@ -14,7 +14,6 @@ class wallpaperManager(QtWidgets.QWidget):
         config = self.parent().loadConfig('Wallpaper', ensure=['wallpaperStyle', 'wallpaperType'])
         if not config: return
         self.config = config
-        print(self.config.keys())
 
         self.loadConfig(self.config)
 

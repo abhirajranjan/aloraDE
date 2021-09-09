@@ -25,6 +25,8 @@ class main(QtWidgets.QWidget):
         self.taskpanel = taskpanel.panel(self)
         self.mainWidgetArea = QtWidgets.QFrame(self)
 
+        self.taskpanel.setObjectName('taskbar')
+
         self.refreshAlwaysOnTopWidgetList()
 
         self.mainWidgetArea.raise_()
@@ -33,7 +35,7 @@ class main(QtWidgets.QWidget):
 
     def refreshAlwaysOnTopWidgetList(self):
         if self.taskpanel.setOnTop:
-            self.setAlwaysOnTop(self.taskpanel, True)
+            self.alwaysOnTop[id(self.taskpanel)] = self.taskpanel
             self.alwaysOnTopWidgetList.setLast(id(self.taskpanel))
 
     def raiseWidget(self, widget: QtWidgets.QWidget) -> bool:
@@ -57,10 +59,11 @@ class main(QtWidgets.QWidget):
             return True
 
         if (id(wid) in self.alwaysOnTop) and (not value):
-            wid.setParent(self.mainWidgetArea)
+            self.alwaysOnTopWidgetList.remove(id(wid))
             return self.alwaysOnTop.pop(id(wid), None)
 
         if not (id(wid) in self.alwaysOnTop):
+            self.alwaysOnTopWidgetList.append(id(wid))
             self.alwaysOnTop[id(wid)] = wid
             return True
         return False
@@ -73,8 +76,23 @@ class main(QtWidgets.QWidget):
         return isConfig
 
     def test(self):
-        self.window = window.widget(self.mainWidgetArea)
-        self.loadApp(self.window)
+        self.window1 = window.widget(self.mainWidgetArea)
+        self.window2 = window.widget(self.mainWidgetArea)
+        self.window3 = window.widget(self.mainWidgetArea)
+
+        self.window1.setObjectName('widget1')
+        self.window2.setObjectName('widget2')
+        self.window3.setObjectName('widget3')
+
+        self.window1.setTitle('window1')
+        self.window2.setTitle('window2')
+        self.window3.setTitle('window3')
+
+        self.setAlwaysOnTop(self.window2, True)
+
+        self.loadApp(self.window1)
+        self.loadApp(self.window2)
+        self.loadApp(self.window3)
 
     def loadApp(self, wid: QtWidgets.QWidget):
         # register wid to active list
@@ -83,14 +101,17 @@ class main(QtWidgets.QWidget):
 
         wid.show()
         wid.move(30, 30)
-        wid.raise_()
-        wid.setFocus()
+        # wid.raise_()
+        # wid.setFocus()
 
         wid.loadGraphicsEffect()
         wid.updateWallpaper()
 
     def grabBackground(self, widget):
         temp = {}
+        if widget in self.alwaysOnTop:
+            return self.grab(QtCore.QRect(widget.x(), widget.y(), widget.width(), widget.height()))
+
         for alwaysOnTopWidgetID in self.alwaysOnTop:
             # TODO :: better method to hide sp widget probably using sets or updating blur algo
             if self.alwaysOnTop[alwaysOnTopWidgetID]:

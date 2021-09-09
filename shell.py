@@ -345,7 +345,7 @@ class windowShell(QtWidgets.QWidget):
         delta = QtCore.QPoint(a0.globalPos() - self.oldPos)
         self.move(self.x() + delta.x(), self.y() + delta.y())
         self.oldPos = a0.globalPos()
-        self.loadGraphicsEffect()
+        # self.loadGraphicsEffect()
         self.updateWallpaper()
 
     ## blur

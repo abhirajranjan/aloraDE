@@ -49,6 +49,8 @@ class LinkedList:
         while currNode.nextNode:
             yield currNode.value
             currNode = currNode.nextNode
+            if not hasattr(currNode, 'value'):
+                break
 
         yield currNode.value
 
@@ -92,7 +94,11 @@ class LinkedList:
         probably_this_node = self.tail
 
         if probably_this_node.value == value:
-            self.tail = probably_this_node.nextNode
+            if self.tail == self.head:
+                self.tail.value = None
+            else:
+                self.tail = self.tail.nextNode
+
             self.elementCount -= 1
             return True
 
