@@ -264,6 +264,7 @@ class titleBar(QtWidgets.QWidget):
 class windowShell(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.loadParentConstaint()
         self.wallpaperCover = QtWidgets.QFrame(self)
         self.wallpaperCover.layout = QtWidgets.QHBoxLayout(self.wallpaperCover)
         self.wallpaper = QtWidgets.QLabel(self)
@@ -295,6 +296,9 @@ class windowShell(QtWidgets.QWidget):
 
         self.loadGraphicsEffect()
         self.readConf()
+
+    def loadParentConstaint(self):
+        self.AlwaysOnTop = False
 
     def readConf(self):
         config = self.window().loadConfig('shell', ensure=['general'])
@@ -367,7 +371,7 @@ class windowShell(QtWidgets.QWidget):
     def updateWallpaper(self):
         self.hide()
         self.blockSignals(True)
-        self.wallpaper.pixmap = self.parent().grab(QtCore.QRect(self.x(), self.y(), self.width(), self.height()))
+        self.wallpaper.pixmap = self.window().grab(QtCore.QRect(self.x(), self.y(), self.width(), self.height()))
         self.wallpaper.setPixmap(self.wallpaper.pixmap)
         self.blockSignals(False)
         self.show()

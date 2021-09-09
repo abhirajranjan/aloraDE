@@ -1,7 +1,11 @@
+# own imports
 import backgroundIntegration
-from PyQt5 import QtWidgets, QtCore, QtGui
 import customFunctions
 import taskpanel
+import window
+
+# Qt imports
+from PyQt5 import QtWidgets, QtCore, QtGui
 
 
 class main(QtWidgets.QWidget):
@@ -18,11 +22,11 @@ class main(QtWidgets.QWidget):
 
         self.taskpanel = taskpanel.panel(self)
         self.mainWidgetArea = QtWidgets.QFrame(self)
-        self.alwaysOnTopArea = QtWidgets.QFrame(self)
 
-        self.mainWidgetArea.raise_()
         self.taskpanel.raise_()
-        self.alwaysOnTopArea.raise_()
+        self.mainWidgetArea.raise_()
+
+        self.test()
 
     def setAlwaysOnTop(self, wid: QtWidgets.QWidget, value: bool) -> bool:
         if (id(wid) in self.alwaysOnTop) and value:
@@ -45,12 +49,17 @@ class main(QtWidgets.QWidget):
             return
         return isConfig
 
+    def test(self):
+        self.window = window.widget(self.mainWidgetArea)
+        self.loadApp(self.window)
+
     def loadApp(self, wid: QtWidgets.QWidget):
         # register wid to active list
         self.activeWindow[id(wid)] = wid
-        wid.resize(500, 500)
+        wid.resize(300, 300)
 
         wid.show()
+        wid.move(30, 30)
         wid.raise_()
         wid.setFocus()
 
@@ -59,9 +68,19 @@ class main(QtWidgets.QWidget):
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         super().resizeEvent(a0)
-        self.alwaysOnTopArea.resize(self.size())
         self.taskpanel.resize(self.size())
         self.mainWidgetArea.resize(self.size())
+
+
+class tempClass(QtWidgets.QFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+    def paintEvent(self, e):
+        self.pixmap = QtGui.QPixmap(self.size())
+        qp = QtGui.QPainter(self)
+        self.pixmap.fill(QtGui.QColor.fromRgb(0, 12, 0))
+        qp.drawPixmap(0 , 0, self.pixmap)
 
 
 if __name__ == '__main__':

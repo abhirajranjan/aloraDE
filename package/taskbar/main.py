@@ -8,7 +8,7 @@ class taskbar(QtWidgets.QWidget):
 
     @QtCore.pyqtSlot(QtCore.QSize)
     def refresh(self, size):
-        self.resize(size.width(), 100)
+        self.resize(size.width(), 10)
         self.move(0, 0)
 
     def paintEvent(self, e):
