@@ -89,6 +89,22 @@ class main(QtWidgets.QWidget):
         wid.loadGraphicsEffect()
         wid.updateWallpaper()
 
+    def grabBackground(self, widget):
+        temp = {}
+        for alwaysOnTopWidgetID in self.alwaysOnTop:
+            # TODO :: better method to hide sp widget probably using sets or updating blur algo
+            if self.alwaysOnTop[alwaysOnTopWidgetID]:
+                if self.alwaysOnTop[alwaysOnTopWidgetID].isVisible():
+                    temp[alwaysOnTopWidgetID] = True
+                    self.alwaysOnTop[alwaysOnTopWidgetID].hide()
+
+        to_return = self.grab(QtCore.QRect(widget.x(), widget.y(), widget.width(), widget.height()))
+
+        for alwaysOnTopWidgetID in temp:
+            self.alwaysOnTop[alwaysOnTopWidgetID].show()
+
+        return to_return
+
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         super().resizeEvent(a0)
         self.taskpanel.resizeEventSignal.emit(self.size())

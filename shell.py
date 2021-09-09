@@ -371,7 +371,7 @@ class windowShell(QtWidgets.QWidget):
     def updateWallpaper(self):
         self.hide()
         self.blockSignals(True)
-        self.wallpaper.pixmap = self.window().grab(QtCore.QRect(self.x(), self.y(), self.width(), self.height()))
+        self.wallpaper.pixmap = self.window().grabBackground(self)
         self.wallpaper.setPixmap(self.wallpaper.pixmap)
         self.blockSignals(False)
         self.show()
