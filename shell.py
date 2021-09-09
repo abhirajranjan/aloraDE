@@ -383,11 +383,30 @@ class windowShell(QtWidgets.QWidget):
                                                          pixmap.height() + extend * 2))
         return res
 
+    def addToArea(self, widget, area):
+        for child in widget.children():
+            if issubclass(type(child), QtWidgets.QLayout):
+                continue
+
+            point = child.mapTo(self.window(), QtCore.QPoint(0, 0))
+            area.append(QtCore.QRect(point.x(), point.y(), child.rect().width(), child.rect().height()))
+
     @QtCore.pyqtSlot()
     def updateWallpaper(self):
         self.hide()
         self.blockSignals(True)
-        self.wallpaper.pixmap = self.window().grabBackground(self)
+        area = []
+        if not self.layout.contentsMargins().isNull():
+            self.addToArea(self.tb.rightFrame, area)
+            self.addToArea(self.tb.centralFrame, area)
+            self.addToArea(self.tb.leftFrame, area)
+
+        point = self.wallpaper.mapTo(self.window(), QtCore.QPoint(0, 0))
+        area.append(QtCore.QRect(point.x(), point.y(), self.wallpaper.rect().width(), self.wallpaper.rect().height()))
+
+        returnPixmaps = self.window().grabBackground(self, areas=area)
+        self.wallpaper.pixmap = returnPixmaps[-1]
+
         self.wallpaper.setPixmap(self.wallpaper.pixmap)
         self.blockSignals(False)
         self.show()

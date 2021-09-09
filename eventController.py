@@ -107,13 +107,16 @@ class main(QtWidgets.QWidget):
         wid.loadGraphicsEffect()
         wid.updateWallpaper()
 
-    def grabBackground(self, widget):
+    def grabByArea(self, widget, areas):
+        returnData = []
+        for area in areas:
+            returnData.append(self.grab(area))
+        return returnData
+
+    def grabBackground(self, widget, areas={}):
         temp = {}
         if widget in self.alwaysOnTop:
-            return self.grab(QtCore.QRect(widget.x() + widget.layout.x(),
-                                          widget.y() + widget.wallpaper.y(),
-                                          widget.wallpaper.width(),
-                                          widget.wallpaper.height()))
+            return self.grabByArea(widget, areas=areas)
 
         for alwaysOnTopWidgetID in self.alwaysOnTop:
             # TODO :: better method to hide sp widget probably using sets or updating blur algo
@@ -122,7 +125,7 @@ class main(QtWidgets.QWidget):
                     temp[alwaysOnTopWidgetID] = True
                     self.alwaysOnTop[alwaysOnTopWidgetID].hide()
 
-        to_return = self.grab(QtCore.QRect(widget.x(), widget.y(), widget.width(), widget.height()))
+        to_return = self.grabByArea(widget, areas=areas)
 
         for alwaysOnTopWidgetID in temp:
             self.alwaysOnTop[alwaysOnTopWidgetID].show()
