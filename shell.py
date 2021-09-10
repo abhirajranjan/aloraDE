@@ -3,40 +3,72 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 class titleBarButton(QtWidgets.QLabel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.normal = ''
-        self.active = ''
-        self.hover = ''
         self.resize(32, 32)
         self.func = None
+        self.normalPixmap = None
+        self.activePixmap = None
+        self.hoverPixmap = None
+
+    @property
+    def normal(self):
+        pass
+
+    @normal.setter
+    def normal(self, value):
+        self.normalPixmap = QtGui.QPixmap(value)
+
+    @normal.getter
+    def normal(self):
+        return self.normalPixmap
+
+    @property
+    def active(self):
+        pass
+
+    @active.setter
+    def active(self, value):
+        self.activePixmap = QtGui.QPixmap(value)
+
+    @active.getter
+    def active(self):
+        return self.activePixmap
+
+    @property
+    def hover(self):
+        pass
+
+    @hover.setter
+    def hover(self, value):
+        self.hoverPixmap = QtGui.QPixmap(value)
+
+    @hover.getter
+    def hover(self):
+        return self.hoverPixmap
 
     # TODO :: SVG support in titlebar button icons
     def enterEvent(self, a0: QtCore.QEvent) -> None:
         if self.hover:
-            pixmap = QtGui.QPixmap()
-            pixmap.load(self.hover)
-            self.setPixmap(pixmap)
+            self.setPixmap(self.hoverPixmap)
 
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
         if self.normal:
-            pixmap = QtGui.QPixmap()
-            pixmap.load(self.normal)
-            self.setPixmap(pixmap)
+            self.setPixmap(self.normalPixmap)
 
     def mousePressEvent(self, ev: QtGui.QMouseEvent) -> None:
         if self.active:
-            pixmap = QtGui.QPixmap()
-            pixmap.load(self.active)
-            self.setPixmap(pixmap)
+            self.setPixmap(self.activePixmap)
 
     def mouseReleaseEvent(self, ev: QtGui.QMouseEvent) -> None:
         if self.hover:
-            pixmap = QtGui.QPixmap()
-            pixmap.load(self.hover)
-            self.setPixmap(pixmap)
+            self.setPixmap(self.hoverPixmap)
 
         # TODO :: maybe user pressed by mistake and move away cursor while btn being pressed
         if self.func:
             self.func()
+
+    def update(self):
+        if self.normal:
+            self.setPixmap(self.normalPixmap)
 
 
 class Frame(QtWidgets.QFrame):
@@ -156,6 +188,7 @@ class titleBar(QtWidgets.QWidget):
                     self.icon.setSizePolicy(sizePolicy)
 
                     self.icon.setStyleSheet('background: transparent;')
+                    self.icon.update()
 
                 elif item == 'title':
                     self.title = QtWidgets.QLabel(self)
@@ -168,6 +201,7 @@ class titleBar(QtWidgets.QWidget):
                     self.title.setFont(font)
 
                     self.title.setStyleSheet('background: transparent;')
+                    self.title.update()
 
                 elif item == 'shade':
                     self.shade = titleBarButton(self)
@@ -193,6 +227,7 @@ class titleBar(QtWidgets.QWidget):
                     self.shade.setSizePolicy(sizePolicy)
 
                     self.shade.setStyleSheet('background: transparent;')
+                    self.shade.update()
 
                 elif item == 'minimize':
                     self.minimize = titleBarButton(self)
@@ -220,6 +255,7 @@ class titleBar(QtWidgets.QWidget):
                     self.minimize.setSizePolicy(sizePolicy)
 
                     self.minimize.setStyleSheet('background: transparent;')
+                    self.minimize.update()
 
                 elif item == 'maximize':
                     self.maximize = titleBarButton(self)
@@ -247,6 +283,7 @@ class titleBar(QtWidgets.QWidget):
                     self.maximize.setSizePolicy(sizePolicy)
 
                     self.maximize.setStyleSheet('background: transparent;')
+                    self.maximize.update()
 
                 elif item == 'close':
                     self.close = titleBarButton(self)
@@ -273,6 +310,7 @@ class titleBar(QtWidgets.QWidget):
                     self.close.setSizePolicy(sizePolicy)
 
                     self.close.setStyleSheet('background: transparent;')
+                    self.close.update()
 
         super().update()
 
