@@ -38,6 +38,18 @@ class titleBarButton(QtWidgets.QLabel):
         if self.func:
             self.func()
 
+
+class Frame(QtWidgets.QFrame):
+    resizeEventSignal = QtCore.pyqtSignal(QtCore.QSize)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+        self.resizeEventSignal.emit(self.size())
+        return super().resizeEvent(a0)
+
+
 class titleBar(QtWidgets.QWidget):
     minimizing = QtCore.pyqtSignal()
     maximizing = QtCore.pyqtSignal()
@@ -48,9 +60,18 @@ class titleBar(QtWidgets.QWidget):
         super().__init__(*args, **kwargs)
         self.layout = QtWidgets.QHBoxLayout(self)
 
-        self.leftFrame = QtWidgets.QFrame(self)
-        self.centralFrame = QtWidgets.QFrame(self)
-        self.rightFrame = QtWidgets.QFrame(self)
+
+        self.leftFrame = Frame(self)
+        self.centralFrame = Frame(self)
+        self.rightFrame = Frame(self)
+
+        self.leftFrameContainer = QtWidgets.QLabel(self.leftFrame)
+        self.centralFrameContainer = QtWidgets.QLabel(self.centralFrame)
+        self.rightFrameContainer = QtWidgets.QLabel(self.rightFrame)
+
+        self.leftFrame.resizeEventSignal.connect(self.leftFrameContainer.resize)
+        self.centralFrame.resizeEventSignal.connect(self.centralFrameContainer.resize)
+        self.rightFrame.resizeEventSignal.connect(self.rightFrameContainer.resize)
 
         self.horizontalSpacer = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalSpacer1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -323,6 +344,19 @@ class windowShell(QtWidgets.QWidget):
 
         self.wallpaper.setGraphicsEffect(self.blur)
 
+        self.tb.leftFrameContainer.blur = QtWidgets.QGraphicsBlurEffect()
+        self.tb.leftFrameContainer.blur.setBlurRadius(self.config['blur']['radius'])
+
+        self.tb.centralFrameContainer.blur = QtWidgets.QGraphicsBlurEffect()
+        self.tb.centralFrameContainer.blur.setBlurRadius(self.config['blur']['radius'])
+
+        self.tb.rightFrameContainer.blur = QtWidgets.QGraphicsBlurEffect()
+        self.tb.rightFrameContainer.blur.setBlurRadius(self.config['blur']['radius'])
+
+        self.tb.leftFrameContainer.setGraphicsEffect(self.tb.leftFrameContainer.blur)
+        self.tb.centralFrameContainer.setGraphicsEffect(self.tb.centralFrameContainer.blur)
+        self.tb.rightFrameContainer.setGraphicsEffect(self.tb.rightFrameContainer.blur)
+
         if len(self.config['blur']['tint']) == 3:
             color1 = self.config['blur']['tint'][0]
             color2 = self.config['blur']['tint'][1]
@@ -397,16 +431,33 @@ class windowShell(QtWidgets.QWidget):
         self.blockSignals(True)
         area = []
         if not self.layout.contentsMargins().isNull():
-            self.addToArea(self.tb.rightFrame, area)
-            self.addToArea(self.tb.centralFrame, area)
-            self.addToArea(self.tb.leftFrame, area)
+            # self.addToArea(self.tb.rightFrame, area)
+            # self.addToArea(self.tb.centralFrame, area)
+            # self.addToArea(self.tb.leftFrame, area)
+            point = self.tb.rightFrame.mapTo(self.window(), QtCore.QPoint(0, 0))
+            area.append(QtCore.QRect(point.x(), point.y(), self.tb.rightFrame.rect().width(),
+                                     self.tb.rightFrame.rect().height()))
+
+            point = self.tb.centralFrame.mapTo(self.window(), QtCore.QPoint(0, 0))
+            area.append(QtCore.QRect(point.x(), point.y(), self.tb.centralFrame.rect().width(),
+                                     self.tb.centralFrame.rect().height()))
+
+            point = self.tb.leftFrame.mapTo(self.window(), QtCore.QPoint(0, 0))
+            area.append(QtCore.QRect(point.x(), point.y(), self.tb.leftFrame.rect().width(),
+                                     self.tb.leftFrame.rect().height()))
 
         point = self.wallpaper.mapTo(self.window(), QtCore.QPoint(0, 0))
         area.append(QtCore.QRect(point.x(), point.y(), self.wallpaper.rect().width(), self.wallpaper.rect().height()))
 
         returnPixmaps = self.window().grabBackground(self, areas=area)
-        self.wallpaper.pixmap = returnPixmaps[-1]
 
-        self.wallpaper.setPixmap(self.wallpaper.pixmap)
+        if not self.layout.contentsMargins().isNull():
+            for ind, i in enumerate([self.tb.rightFrameContainer,
+                                     self.tb.centralFrameContainer,
+                                     self.tb.leftFrameContainer]):
+                i.setPixmap(returnPixmaps[ind])
+
+        self.wallpaper.pixmap = returnPixmaps[-1]
+        self.wallpaper.setPixmap(returnPixmaps[-1])
         self.blockSignals(False)
         self.show()
