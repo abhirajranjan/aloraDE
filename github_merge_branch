@@ -1,4 +1,0 @@
-git checkout main
-git pull origin main
-git merge <branch name>
-git push origin main
