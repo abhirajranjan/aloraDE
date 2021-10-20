@@ -136,11 +136,3 @@ class main(QtWidgets.QWidget):
         super().resizeEvent(a0)
         self.taskpanel.resizeEventSignal.emit(self.size())
         self.mainWidgetArea.resize(self.size())
-
-
-if __name__ == '__main__':
-    app = QtWidgets.QApplication([])
-    mainApp = main()
-    mainApp.resize(100, 100)
-    mainApp.show()
-    app.exec()
