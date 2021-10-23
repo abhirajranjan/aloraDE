@@ -12,3 +12,6 @@ class panel(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0 ,0)
         self.layout.addWidget(self.taskbar)
+
+    def updateWallpaper(self):
+        ...

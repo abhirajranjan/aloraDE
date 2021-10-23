@@ -358,6 +358,7 @@ class windowShell(QtWidgets.QWidget):
 
     def loadParentConstaint(self):
         self.AlwaysOnTop = False
+        self.id = None
 
     def readConf(self):
         config = self.window().loadConfig('shell', ensure=['general'])
@@ -430,6 +431,8 @@ class windowShell(QtWidgets.QWidget):
         self.updateWallpaper()
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
+        if (not self.id == None):
+            self.window().updateWidgetBackground.emit(self.window().activeWindow, self)
         delta = QtCore.QPoint(a0.globalPos() - self.oldPos)
         self.move(self.x() + delta.x(), self.y() + delta.y())
         self.oldPos = a0.globalPos()

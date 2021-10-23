@@ -4,16 +4,22 @@ import customFunctions
 import taskpanel
 import window
 
+import threading
+
 # Qt imports
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 
 class main(QtWidgets.QWidget):
+    updateWidgetBackground = QtCore.pyqtSignal(dict, QtWidgets.QWidget)
+
     def __init__(self):
         super().__init__()
 
         self.activeWindow = {}
         self.alwaysOnTop = {}
+
+        self.updateWidgetBackground.connect(self.widgetBackgroundUpdater)
 
         self.alwaysOnTopWidgetList = customFunctions.LinkedList()
 
@@ -75,6 +81,15 @@ class main(QtWidgets.QWidget):
             return
         return isConfig
 
+    def widgetBackgroundUpdater(self, widgetDicttoUpdate: dict, wid: QtWidgets.QWidget):
+        mydict = dict(widgetDicttoUpdate)
+        for widid in mydict:
+            if wid == mydict[widid]:
+                continue
+            mydict[widid].updateWallpaper()
+
+        #wid.updateWallpaper()
+
     def test(self):
         self.window1 = window.widget(self.mainWidgetArea)
         self.window2 = window.widget(self.mainWidgetArea)
@@ -97,12 +112,11 @@ class main(QtWidgets.QWidget):
     def loadApp(self, wid: QtWidgets.QWidget):
         # register wid to active list
         self.activeWindow[id(wid)] = wid
+        wid.id = id(wid)
         wid.resize(300, 300)
 
         wid.show()
         wid.move(30, 30)
-        # wid.raise_()
-        # wid.setFocus()
 
         wid.loadGraphicsEffect()
         wid.updateWallpaper()
